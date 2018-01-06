@@ -6,7 +6,7 @@ CREATE TABLE videos (
 video_id serial PRIMARY KEY,
 title_video VARCHAR(255) NOT NULL,
 length_mins FLOAT,
-url VARCHAR(350) NOT NULL)
+url VARCHAR(350) NOT NULL);
 
 INSERT INTO videos(title_video, length_mins, url)
 VALUES ("Databases - Episode 6 - Joining Tables", 5.5, "https://www.youtube.com/watch?v=79EBoVPUzkE"),
@@ -39,4 +39,4 @@ SELECT v.video_id, title_video, user_name, raiting, description
 FROM videos as v
 INNER JOIN reviewers as r
 ON r.video_id = v.video_id
-ORDER BY video_id, raiting DESC
+ORDER BY video_id, raiting DESC;

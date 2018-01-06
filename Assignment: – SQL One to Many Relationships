@@ -1,0 +1,42 @@
+Q1.) Videos table. Create one table to keep track of the videos. This table should include a unique ID, the title of the
+video, the length in minutes, and the URL. Populate the table with at least three related videos from YouTube or
+other publicly available resources
+
+CREATE TABLE videos (
+video_id serial PRIMARY KEY,
+title_video VARCHAR(255) NOT NULL,
+length_mins FLOAT,
+url VARCHAR(350) NOT NULL)
+
+INSERT INTO videos(title_video, length_mins, url)
+VALUES ("Databases - Episode 6 - Joining Tables", 5.5, "https://www.youtube.com/watch?v=79EBoVPUzkE"),
+("Databases - Episode 7 - Missing Data", 4.8, "https://www.youtube.com/watch?v=KLugfNdGNFw"),
+("Databases - Episode 5 - Aggregation", 6, "https://www.youtube.com/watch?v=ZjuL-pfkUOA");
+
+Q2.) Create and populate Reviewers table. Create a second table that provides at least two user reviews for each of
+at least two of the videos. These should be imaginary reviews that include columns for the user’s name
+(“Asher”, “Cyd”, etc.), the rating (which could be NULL, or a number between 0 and 5), and a short text review
+(“Loved it!”). There should be a column that links back to the ID column in the table of videos.
+
+CREATE TABLE reviewers (
+reviewer_id serial PRIMARY KEY,
+video_id int NOT NULL REFERENCES videos,
+user_name VARCHAR(255) NOT NULL,
+raiting integer,
+description VARCHAR(255));
+
+INSERT INTO reviewers (video_id, user_name, raiting, description)
+VALUES (1, "Nick", 5, "Loved it!"),
+(1, "Harley", 4, "Great!"),
+(2, "amanda", 4, "Great!"),
+(2, "Chris", 3, "Eh!"),
+(3, "Matt", 5, "Not bad!"),
+(3, "Haley", 2, "bad!");
+
+Q3.) Report on Video Reviews. Write a JOIN statement that shows information from both tables.
+
+SELECT v.video_id, title_video, user_name, raiting, description
+FROM videos as v
+INNER JOIN reviewers as r
+ON r.video_id = v.video_id
+ORDER BY video_id, raiting DESC

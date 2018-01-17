@@ -1,0 +1,118 @@
+Instructions:
+This project is where you show off your ability to (1) translate a business requirement into a database design, (2) design
+a database using one-to-many and many-to-many relationships, and (3) know when to use LEFT and/or RIGHT JOINs to
+build result sets for reporting.
+An organization grants key-card access to rooms based on groups that key-card holders belong to. You may assume that
+users below to only one group. Your job is to design the database that supports the key-card system.
+There are six users, and four groups. Modesto and Ayine are in group “I.T.” Christopher and Cheong woo are in group
+“Sales”. There are four rooms: “101”, “102”, “Auditorium A”, and “Auditorium B”. Saulat is in group
+“Administration.” Group “Operations” currently doesn’t have any users assigned. I.T. should be able to access Rooms
+101 and 102. Sales should be able to access Rooms 102 and Auditorium A. Administration does not have access to any
+rooms. Heidy is a new employee, who has not yet been assigned to any group.
+After you determine the tables any relationships between the tables (One to many? Many to one? Many to many?), you
+should create the tables and populate them with the information indicated above.
+Next, write SELECT statements that provide the following information:
+• All groups, and the users in each group. A group should appear even if there are no users assigned to the group.
+• All rooms, and the groups assigned to each room. The rooms should appear even if no groups have been
+assigned to them.
+• A list of users, the groups that they belong to, and the rooms to which they are assigned. This should be sorted
+alphabetically by user, then by group, then by room.
+
+
+-- Creates the users table
+CREATE TABLE users (
+userid INT PRIMARY KEY,
+username varchar(55));
+
+
+-- inserts values into the users table - the 6 users from directions
+INSERT INTO users (userid, username)
+VALUES 
+(1, 'Modesto'), (2, 'Ayine'), (3, 'Christopher'), (4, 'Cheong woo'),
+(5, 'Saulat'), (6, 'Heidy');
+
+
+-- create groups table
+CREATE TABLE groups(
+groupid INT PRIMARY KEY,
+groupname varchar(55));
+
+-- inserts values into the groups table - the 4 users from directions
+INSERT INTO groups (groupid, groupname)
+VALUES (1, 'I.T.'), (2, 'Sales'), (3, 'Administration'),
+(4, 'Operations');
+
+-- create room table
+CREATE TABLE rooms(
+roomid INT PRIMARY KEY,
+roomname varchar(25));
+
+-- insert values into room table (4 rooms)
+INSERT INTO rooms(roomid, roomname)
+VALUES
+(1, '101'),
+(2, '102'),
+(3, 'Auditorium A'),
+(4, 'Auditorium B');
+
+-- creates a table for group permissions 
+CREATE TABLE permission(
+groupid INT,
+roomid INT);
+
+--inserts values into permissions (what groups get to access what)
+INSERT INTO permission(groupid, roomid)
+VALUES 
+(1,1), -- IT has permission to room 101
+(1, 2), -- permission to room 102
+(2, 2), -- sales permisison to room 102
+(2, 3); -- sales permission to auditorium A
+
+-- creates user permissions
+CREATE TABLE group_permission(
+userid INT,
+groupid INT);
+
+-- insert values into permissions(which users get to access what)
+insert into group_permission(userid, groupid)
+values
+(1, 1), -- Modesto to IT
+(2, 1), -- Ayine to IT
+(3, 2), -- CHris to sales
+(4, 2), -- Cheong to sales
+(5, 3); -- saulat to admin
+
+
+
+-- All groups, and the users in each group. A group should appear even if there are no users assigned to the group.
+
+SELECT groups.groupname, users.username
+FROM groups
+LEFT JOIN group_permission 
+ON groups.groupid = group_permission.groupid
+LEFT JOIN users 
+ON group_permission.userid = users.userid;
+
+-- All rooms, and the groups assigned to each room. The rooms should appear even if no groups have been
+assigned to them.
+
+SELECT rooms.roomname, groups.groupname
+FROM rooms
+LEFT JOIN permission ON rooms.roomid = permission.roomid
+LEFT JOIN groups ON permission.groupid = groups.groupid;
+
+-- A list of users, the groups that they belong to, and the rooms to which they are assigned. This should be sorted
+alphabetically by user, then by group, then by room
+
+select users.username, groups.groupname, rooms.roomname
+from users
+left join group_permission
+on users.userid = group_permission.userid
+left join groups
+on group_permission.groupid = groups.groupid
+left join permission 
+on groups.groupid = permission.groupid
+left join rooms
+on permission.roomid = rooms.roomid
+
+order by users.username, groups.groupname, rooms.roomname;

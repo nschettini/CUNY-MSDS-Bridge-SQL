@@ -19,17 +19,19 @@ assigned to them.
 alphabetically by user, then by group, then by room.
 
 
+
 -- Creates the users table
 CREATE TABLE users (
 userid INT PRIMARY KEY,
 username varchar(55));
-
 
 -- inserts values into the users table - the 6 users from directions
 INSERT INTO users (userid, username)
 VALUES 
 (1, 'Modesto'), (2, 'Ayine'), (3, 'Christopher'), (4, 'Cheong woo'),
 (5, 'Saulat'), (6, 'Heidy');
+
+
 
 
 -- create groups table
@@ -41,6 +43,9 @@ groupname varchar(55));
 INSERT INTO groups (groupid, groupname)
 VALUES (1, 'I.T.'), (2, 'Sales'), (3, 'Administration'),
 (4, 'Operations');
+
+
+
 
 -- create room table
 CREATE TABLE rooms(
@@ -55,25 +60,13 @@ VALUES
 (3, 'Auditorium A'),
 (4, 'Auditorium B');
 
--- creates a table for group permissions 
-CREATE TABLE permission(
-groupid INT,
-roomid INT);
 
---inserts values into permissions (what groups get to access what)
-INSERT INTO permission(groupid, roomid)
-VALUES 
-(1,1), -- IT has permission to room 101
-(1, 2), -- permission to room 102
-(2, 2), -- sales permisison to room 102
-(2, 3); -- sales permission to auditorium A
 
--- creates user permissions
+-- assign users to groups for permission
 CREATE TABLE group_permission(
 userid INT,
 groupid INT);
 
--- insert values into permissions(which users get to access what)
 insert into group_permission(userid, groupid)
 values
 (1, 1), -- Modesto to IT
@@ -81,6 +74,25 @@ values
 (3, 2), -- CHris to sales
 (4, 2), -- Cheong to sales
 (5, 3); -- saulat to admin
+
+
+
+
+-- what groups get to access what room 
+CREATE TABLE permission(
+groupid INT,
+roomid INT);
+
+INSERT INTO permission(groupid, roomid)
+VALUES 
+(1,1), -- IT has permission to access to room 101
+(1, 2), -- permissio to access room 102
+(2, 2), -- sales has permission to access  room 102
+(2, 3); -- sales has permission to access auditorium A
+
+
+
+
 
 
 
@@ -114,5 +126,4 @@ left join permission
 on groups.groupid = permission.groupid
 left join rooms
 on permission.roomid = rooms.roomid
-
 order by users.username, groups.groupname, rooms.roomname;
